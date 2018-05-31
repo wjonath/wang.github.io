@@ -3,6 +3,42 @@
   
     
     <entry>
+      <title>linux下安装mysql5.7压缩版</title>
+      <link href="/2018/05/31/linux%E4%B8%8B%E5%AE%89%E8%A3%85mysql5-7%E5%8E%8B%E7%BC%A9%E7%89%88/"/>
+      <url>/2018/05/31/linux%E4%B8%8B%E5%AE%89%E8%A3%85mysql5-7%E5%8E%8B%E7%BC%A9%E7%89%88/</url>
+      <content type="html"><![CDATA[<p>linux下安装mysql5.7的压缩版</p><ul><li>下载安装包并解压</li><li>解压后拷贝到 <code>/usr/local/mysql</code>目录</li><li>创建 data、logs 目录： </li></ul><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span>data <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span>logs</span><br></pre></td></tr></table></figure><ul><li>修改 <code>/etc/my.cnf</code>文件，若没有改文件则创建</li></ul><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[client]</span></span><br><span class="line"><span class="attr">socket</span>=/usr/local/mysql/mysql.sock</span><br><span class="line"></span><br><span class="line"><span class="section">[mysqld]</span></span><br><span class="line"><span class="attr">port</span>=<span class="number">3306</span></span><br><span class="line"><span class="attr">basedir</span>=/usr/local/mysql</span><br><span class="line"><span class="attr">datadir</span>=/usr/local/mysql/data</span><br><span class="line"><span class="attr">socket</span>=/usr/local/mysql/mysql.sock</span><br><span class="line"><span class="attr">symbolic-links</span>=<span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="section">[mysqld_safe]</span></span><br><span class="line"><span class="attr">log-error</span>=/usr/local/mysql/logs/mysql.log</span><br><span class="line"><span class="attr">pid-file</span>=/usr/local/mysql/mysql.pid</span><br></pre></td></tr></table></figure><ul><li>创建mysql用户组及其用户</li></ul><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">groupadd mysql</span></span><br><span class="line"><span class="attribute">useradd -r -g mysql mysql</span></span><br></pre></td></tr></table></figure><ul><li>赋予目录相应权限</li></ul><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chown -R mysql <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span></span><br><span class="line">chgrp -R mysql <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span></span><br></pre></td></tr></table></figure><ul><li>修改环境变量，增加mysql路径</li></ul><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">MYSQL_HOME</span>=/usr/local/mysql</span><br><span class="line"><span class="builtin-name">export</span> <span class="attribute">PATH</span>=<span class="variable">$MYSQL_HOME</span>/bin:$PATH</span><br></pre></td></tr></table></figure><ul><li>初始化，并记录下初始化的root用户密码</li></ul><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqld --initialize <span class="attribute">--user</span>=mysql <span class="attribute">--basedir</span>=/usr/local/mysql/ <span class="attribute">--datadir</span>=/usr/local/mysql/data/</span><br></pre></td></tr></table></figure><ul><li>已安全方式启动mysql，该方式启动可保证mysql进程异常后会自动重启</li></ul><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqld_safe <span class="attribute">--user</span>=mysql</span><br></pre></td></tr></table></figure><ul><li>加入系统自动启动</li></ul><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span>support-files<span class="regexp">/mysql.server /</span>etc<span class="regexp">/init.d/my</span>sqld</span><br><span class="line">chkconfig mysqld on</span><br></pre></td></tr></table></figure><ul><li>用root账户登录，并修改初始密码</li></ul><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -p</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">user</span> root@localhost <span class="keyword">identified</span> <span class="keyword">by</span> <span class="string">'tiger'</span>;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+        <tags>
+            
+            <tag> mysql </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>Flyway--数据库版本管理利器</title>
+      <link href="/2018/05/25/Flyway-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E5%88%A9%E5%99%A8/"/>
+      <url>/2018/05/25/Flyway-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E5%88%A9%E5%99%A8/</url>
+      <content type="html"><![CDATA[<h3 id="Flyway–数据库版本管理利器"><a href="#Flyway–数据库版本管理利器" class="headerlink" title="Flyway–数据库版本管理利器"></a>Flyway–数据库版本管理利器</h3><ul><li>url: <a href="https://blog.csdn.net/u014091123/article/details/78133522" target="_blank" rel="noopener">https://blog.csdn.net/u014091123/article/details/78133522</a></li></ul>]]></content>
+      
+      <categories>
+          
+          <category> database </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> database </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>docker入门</title>
       <link href="/2018/05/25/docker%E5%85%A5%E9%97%A8/"/>
       <url>/2018/05/25/docker%E5%85%A5%E9%97%A8/</url>
