@@ -3,6 +3,59 @@
   
     
     <entry>
+      <title>mysql高可用之MHA的搭建</title>
+      <link href="/2018/06/01/mysql%E9%AB%98%E5%8F%AF%E7%94%A8%E4%B9%8BMHA%E7%9A%84%E6%90%AD%E5%BB%BA/"/>
+      <url>/2018/06/01/mysql%E9%AB%98%E5%8F%AF%E7%94%A8%E4%B9%8BMHA%E7%9A%84%E6%90%AD%E5%BB%BA/</url>
+      <content type="html"><![CDATA[<h2 id="mysql高可用之MHA的搭建"><a href="#mysql高可用之MHA的搭建" class="headerlink" title="mysql高可用之MHA的搭建"></a>mysql高可用之MHA的搭建</h2><ul><li>3节点，服务器环境 centos 7.5, mysql 5.7, 同步节点时间</li><li><p>安装perl mysql模块，可以使用yum，需先安装epel源</p><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum <span class="keyword">install</span> perl-DBD-MySQL -y</span><br></pre></td></tr></table></figure></li><li><p>安装MHA，</p><blockquote><p><a href="https://github.com/yoshinorim/mha4mysql-manager" target="_blank" rel="noopener">https://github.com/yoshinorim/mha4mysql-manager</a><br>下载地址：<a href="https://code.google.com/p/mysql-master-ha/wiki/Downloads?tm=2（自备梯子）" target="_blank" rel="noopener">https://code.google.com/p/mysql-master-ha/wiki/Downloads?tm=2（自备梯子）</a></p></blockquote></li><li><p>3台机器上都要安装 mha4mysql-node</p><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">rpm</span> <span class="selector-tag">-ivh</span> <span class="selector-tag">mha4mysql-node-0</span><span class="selector-class">.58-0</span><span class="selector-class">.el7</span><span class="selector-class">.centos</span><span class="selector-class">.noarch</span><span class="selector-class">.rpm</span></span><br></pre></td></tr></table></figure></li><li><p>管理机器上安装 mha4mysql-manager</p><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">rpm</span> <span class="selector-tag">-ivh</span> <span class="selector-tag">mha4mysql-manager-0</span><span class="selector-class">.58-0</span><span class="selector-class">.el7</span><span class="selector-class">.centos</span><span class="selector-class">.noarch</span><span class="selector-class">.rpm</span></span><br></pre></td></tr></table></figure></li><li><p>脚本管理，均在 app1.cnf 文件中进行配置</p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">master_ip_failover</span>  <span class="comment">#自动切换时vip管理的脚本，不是必须，如果我们使用keepalived的，我们可以自己编写脚本完成对vip的管理，比如监控mysql，如果mysql异常,我们停止keepalived就行，这样vip就会自动漂移</span></span><br><span class="line">master_ip_online_change  <span class="comment">#在线切换时vip的管理，不是必须，同样可以可以自行编写简单的shell完成</span></span><br><span class="line">power_manager  <span class="comment">#故障发生后关闭主机的脚本，不是必须</span></span><br><span class="line">send_report   <span class="comment">#因故障切换后发送报警的脚本，不是必须，可自行编写简单的shell完成</span></span><br></pre></td></tr></table></figure></li></ul><h2 id="遇见的一些错误总结"><a href="#遇见的一些错误总结" class="headerlink" title="遇见的一些错误总结"></a>遇见的一些错误总结</h2><ul><li>Can’t exec “mysqlbinlog”: <figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Can't exec <span class="string">"mysqlbinlog"</span>: No such <span class="built_in">file</span> <span class="keyword">or</span> directory <span class="keyword">at</span> /usr/share/perl5/vendor_perl/MHA/BinlogManager.pm line <span class="number">106.</span></span><br><span class="line">mysqlbinlog <span class="built_in">version</span> command failed <span class="keyword">with</span> rc <span class="number">1</span>:<span class="number">0</span>, please verify PATH, LD_LIBRARY_PATH, <span class="keyword">and</span> client options</span><br><span class="line"> <span class="keyword">at</span> /usr/bin/apply_diff_relay_logs line <span class="number">532.</span></span><br></pre></td></tr></table></figure></li></ul><p>解决方案：<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">type mysqlbinlog</span><br><span class="line">ln -s <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span>bin<span class="regexp">/mysqlbinlog /u</span>sr<span class="regexp">/bin/my</span>sqlbinlog</span><br></pre></td></tr></table></figure></p><ul><li>MHA只能应对一次故障转移，并会在配置的 manager_workdir 目录下生产记录文件，如果要再次启用请清理该目录下 app1.failover.complete 文件</li></ul>]]></content>
+      
+      
+        <tags>
+            
+            <tag> mysql </tag>
+            
+            <tag> mha </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>mysql一主多从搭建</title>
+      <link href="/2018/06/01/mysql%E4%B8%80%E4%B8%BB%E5%A4%9A%E4%BB%8E%E6%90%AD%E5%BB%BA/"/>
+      <url>/2018/06/01/mysql%E4%B8%80%E4%B8%BB%E5%A4%9A%E4%BB%8E%E6%90%AD%E5%BB%BA/</url>
+      <content type="html"><![CDATA[<h1 id="mysql-5-7一主多从搭建"><a href="#mysql-5-7一主多从搭建" class="headerlink" title="mysql 5.7一主多从搭建"></a>mysql 5.7一主多从搭建</h1><ul><li><p>安装好mysql并开启bin-log，修改 my.cnf 设置丛库只读</p><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">read_only</span>=<span class="literal">ON</span></span><br></pre></td></tr></table></figure></li><li><p>SSH密钥登录方式设置，3台机器需要相互授权，包括自己本身这台</p><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa</span><br><span class="line">ssh-copy-id -<span class="selector-tag">i</span> /root/.ssh/id_rsa<span class="selector-class">.pub</span> root@<span class="number">192.168</span>.<span class="number">11.128</span></span><br><span class="line">ssh-copy-id -<span class="selector-tag">i</span> /root/.ssh/id_rsa<span class="selector-class">.pub</span> root@<span class="number">192.168</span>.<span class="number">11.129</span></span><br><span class="line">ssh-copy-id -<span class="selector-tag">i</span> /root/.ssh/id_rsa<span class="selector-class">.pub</span> root@<span class="number">192.168</span>.<span class="number">11.130</span></span><br></pre></td></tr></table></figure></li><li><p>创建mysql数据复制的账号，并授权：</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GRANT</span> <span class="keyword">REPLICATION</span> <span class="keyword">SLAVE</span> <span class="keyword">ON</span> *.* <span class="keyword">TO</span> <span class="string">'repl'</span>@<span class="string">'192.168.%'</span> <span class="keyword">IDENTIFIED</span> <span class="keyword">BY</span> <span class="string">'repl'</span>;</span><br></pre></td></tr></table></figure></li><li><p>找到master的bin-log位置</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">master</span> <span class="keyword">logs</span>;</span><br></pre></td></tr></table></figure></li><li><p>根据上面找到的信息设置slave，清空主库日志命令：<code>flush logs;</code></p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">stop</span> <span class="keyword">slave</span>;</span><br><span class="line"><span class="keyword">CHANGE</span> <span class="keyword">MASTER</span> <span class="keyword">TO</span> MASTER_HOST=<span class="string">'192.168.11.129'</span>,MASTER_USER=<span class="string">'repl'</span>, MASTER_PASSWORD=<span class="string">'repl'</span>, MASTER_LOG_FILE=<span class="string">'mysql-bin.000007'</span>,MASTER_LOG_POS=<span class="number">154</span>;</span><br><span class="line"><span class="keyword">start</span> <span class="keyword">slave</span>;</span><br></pre></td></tr></table></figure></li></ul><h4 id="遇到的一些错误"><a href="#遇到的一些错误" class="headerlink" title="遇到的一些错误"></a>遇到的一些错误</h4><ul><li>克隆虚拟机的时候，slave会出现重复的uuid，把 auto.cnf 文件删除，重启mysql会自动生成新的uuid</li></ul>]]></content>
+      
+      <categories>
+          
+          <category> database </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> mysql </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>mysql开启bin-log日志</title>
+      <link href="/2018/05/31/mysql%E5%BC%80%E5%90%AFbin-log%E6%97%A5%E5%BF%97/"/>
+      <url>/2018/05/31/mysql%E5%BC%80%E5%90%AFbin-log%E6%97%A5%E5%BF%97/</url>
+      <content type="html"><![CDATA[<h1 id="开启mysql的bin-log日志"><a href="#开启mysql的bin-log日志" class="headerlink" title="开启mysql的bin-log日志"></a>开启mysql的bin-log日志</h1><p>编辑 my.cnf 文件，加入：<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">log-bin=<span class="regexp">/var/</span>lib<span class="regexp">/mysql/my</span>sql-bin</span><br></pre></td></tr></table></figure></p><p>重启mysql，登录，查看<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">variables</span> <span class="keyword">like</span> <span class="string">'%log_bin%'</span>;</span><br></pre></td></tr></table></figure></p><p>若log_bin 状态为 on，则开启成功</p>]]></content>
+      
+      
+        <tags>
+            
+            <tag> bin-log </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>linux下安装mysql5.7压缩版</title>
       <link href="/2018/05/31/linux%E4%B8%8B%E5%AE%89%E8%A3%85mysql5-7%E5%8E%8B%E7%BC%A9%E7%89%88/"/>
       <url>/2018/05/31/linux%E4%B8%8B%E5%AE%89%E8%A3%85mysql5-7%E5%8E%8B%E7%BC%A9%E7%89%88/</url>
