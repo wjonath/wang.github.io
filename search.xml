@@ -3,6 +3,48 @@
   
     
     <entry>
+      <title>docker之阿里云</title>
+      <link href="/2018/06/10/docker%E4%B9%8B%E9%98%BF%E9%87%8C%E4%BA%91/"/>
+      <url>/2018/06/10/docker%E4%B9%8B%E9%98%BF%E9%87%8C%E4%BA%91/</url>
+      <content type="html"><![CDATA[<p>登录阿里云docker registry:<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker login --username=xxx@<span class="number">163</span><span class="selector-class">.com</span> registry<span class="selector-class">.cn-hangzhou</span><span class="selector-class">.aliyuncs</span><span class="selector-class">.com</span></span><br></pre></td></tr></table></figure></p><p>登录registry的用户名是您的阿里云账号全名，密码是您开通服务时设置的密码。</p><p>你可以在镜像管理首页点击右上角按钮修改docker login密码。</p><p>从registry中拉取镜像：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker pull registry<span class="selector-class">.cn-hangzhou</span><span class="selector-class">.aliyuncs</span><span class="selector-class">.com</span>/jonath/dokuwiki:[镜像版本号]</span><br></pre></td></tr></table></figure></p><p>将镜像推送到registry：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker login --username= registry<span class="selector-class">.cn-hangzhou</span><span class="selector-class">.aliyuncs</span><span class="selector-class">.com</span></span><br><span class="line">$ sudo docker tag [ImageId] registry<span class="selector-class">.cn-hangzhou</span><span class="selector-class">.aliyuncs</span><span class="selector-class">.com</span>/jonath/dokuwiki:[镜像版本号]</span><br><span class="line">$ sudo docker push registry<span class="selector-class">.cn-hangzhou</span><span class="selector-class">.aliyuncs</span><span class="selector-class">.com</span>/jonath/dokuwiki:[镜像版本号]</span><br></pre></td></tr></table></figure></p><p>其中[ImageId],[镜像版本号]请你根据自己的镜像信息进行填写。<br>注意您的网络环境</p><p>  从ECS推送镜像时，可以选择走内网，速度将大大提升，并且将不会损耗您的公网流量。</p><p>  如果您申请的机器是在经典网络，请使用 registry-internal.cn-hangzhou.aliyuncs.com 作为registry的域名登录, 并作为镜像名空间前缀</p><p>  如果您申请的机器是在vpc网络的，请使用 registry-vpc.cn-hangzhou.aliyuncs.com 作为registry的域名登录, 并作为镜像名空间前缀</p><p>sample:</p><p>使用docker tag重命名镜像，并将它通过私网ip推送至registry：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo docker images</span></span><br></pre></td></tr></table></figure></p><p>  REPOSITORY                                                         TAG                 IMAGE ID            CREATED             VIRTUAL SIZE<br>  registry.aliyuncs.com/acs/agent                                    0.7-dfb6816         37bb9c63c8b2        7 days ago          37.89 MB<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker tag <span class="number">37</span>bb9c63c8b2 registry-internal<span class="selector-class">.cn-hangzhou</span><span class="selector-class">.aliyuncs</span><span class="selector-class">.com</span>/acs/agent:<span class="number">0.7</span>-dfb6816</span><br></pre></td></tr></table></figure></p><p>通过docker images 找到您的imageId 并对于改imageId重命名镜像domain到registry内网地址。<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker push registry-internal<span class="selector-class">.cn-hangzhou</span><span class="selector-class">.aliyuncs</span><span class="selector-class">.com</span>/acs/agent:<span class="number">0.7</span>-dfb6816</span><br></pre></td></tr></table></figure></p>]]></content>
+      
+      <categories>
+          
+          <category> docker </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> docker aliyun </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>dokuwiki配置说明</title>
+      <link href="/2018/06/10/dokuwiki%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/"/>
+      <url>/2018/06/10/dokuwiki%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/</url>
+      <content type="html"><![CDATA[<ul><li>配置sidebar<br>通过 welcome 页面进入 sidebar，编辑页面内容：<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;indexmenu&gt;..#<span class="number">1</span>|js navbar nocookie&#125;&#125;</span><br></pre></td></tr></table></figure></li></ul><p>保存后，安装 indexmenu 插件<br>更详细的配置参见：<a href="https://www.dokuwiki.org/plugin:indexmenu" target="_blank" rel="noopener">https://www.dokuwiki.org/plugin:indexmenu</a></p><ul><li>安装插件<ul><li>upgrade</li><li>Bootstrap3 Template</li><li>codedoc</li><li>move/pagemove</li><li>addnewpage</li></ul></li></ul>]]></content>
+      
+      <categories>
+          
+          <category> other </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> wiki </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>vmware+centos文件共享</title>
       <link href="/2018/06/07/vmware-centos%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB/"/>
       <url>/2018/06/07/vmware-centos%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB/</url>
@@ -170,15 +212,6 @@
     </entry>
     
     <entry>
-      <title>Hello World</title>
-      <link href="/2018/05/14/hello-world/"/>
-      <url>/2018/05/14/hello-world/</url>
-      <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>]]></content>
-      
-      
-    </entry>
-    
-    <entry>
       <title>spring-boot配置大全</title>
       <link href="/2018/05/14/pring-boot%E9%85%8D%E7%BD%AE%E5%A4%A7%E5%85%A8/"/>
       <url>/2018/05/14/pring-boot%E9%85%8D%E7%BD%AE%E5%A4%A7%E5%85%A8/</url>
@@ -206,7 +239,7 @@
       <title>free-soft</title>
       <link href="/2018/05/05/free-soft/"/>
       <url>/2018/05/05/free-soft/</url>
-      <content type="html"><![CDATA[<h3 id="windows-免费且好用的软件"><a href="#windows-免费且好用的软件" class="headerlink" title="windows 免费且好用的软件"></a>windows 免费且好用的软件</h3><ul><li>MPC-HC: Media Player Classic Home Cinema</li><li>Foobar2000</li><li>7-Zip, BandZip</li><li>DISM++</li><li>FDM: Free Download Manager</li><li>NoSQL Manager for MongoDB</li></ul><h3 id="thei"><a href="#thei" class="headerlink" title="thei"></a>thei</h3>]]></content>
+      <content type="html"><![CDATA[<h3 id="windows-免费且好用的软件"><a href="#windows-免费且好用的软件" class="headerlink" title="windows 免费且好用的软件"></a>windows 免费且好用的软件</h3><ul><li>MPC-HC: Media Player Classic Home Cinema 播放器</li><li>Foobar2000 播放器</li><li>7-Zip, BandZip 压缩软件</li><li>DISM++ 清理软件</li><li>FDM: Free Download Manager 下载管理器</li><li>NoSQL Manager for MongoDB mongodb的UI工具</li><li>Notepad++ 编辑器</li></ul><h3 id="linux"><a href="#linux" class="headerlink" title="linux"></a>linux</h3><p>- </p>]]></content>
       
       
     </entry>
@@ -233,27 +266,6 @@
     </entry>
     
     <entry>
-      <title>一道美食</title>
-      <link href="/2018/04/26/%E4%B8%80%E9%81%93%E7%BE%8E%E9%A3%9F/"/>
-      <url>/2018/04/26/%E4%B8%80%E9%81%93%E7%BE%8E%E9%A3%9F/</url>
-      <content type="html"><![CDATA[<h4 id="美食记"><a href="#美食记" class="headerlink" title="美食记"></a>美食记</h4><ul><li>打记事起</li></ul>]]></content>
-      
-      <categories>
-          
-          <category> python </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 美食 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>大道至简</title>
       <link href="/2018/04/22/%E5%A4%A7%E9%81%93%E8%87%B3%E7%AE%80/"/>
       <url>/2018/04/22/%E5%A4%A7%E9%81%93%E8%87%B3%E7%AE%80/</url>
@@ -269,27 +281,6 @@
         <tags>
             
             <tag> hexo </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>first</title>
-      <link href="/2018/04/22/first/"/>
-      <url>/2018/04/22/first/</url>
-      <content type="html"><![CDATA[<h3 id="简单生活"><a href="#简单生活" class="headerlink" title="简单生活"></a>简单生活</h3><ul><li>平心静气</li><li>fu</li></ul>]]></content>
-      
-      <categories>
-          
-          <category> 生活 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> python </tag>
             
         </tags>
       
